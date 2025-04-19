@@ -194,13 +194,13 @@ The server provides the following API endpoints:
 
 **Get server status:**
 
-```json
+```bash
 curl http://localhost:8080/mcp/v1/status
 ```
 
 **Upsert documents:**
 
-```json
+```bash
 curl -X POST 
 
 http://localhost:8080/mcp/v1/upsert 
@@ -231,7 +231,7 @@ http://localhost:8080/mcp/v1/upsert
 
 **Query documents:**
 
-```json
+```bash
 curl -X POST 
 
 http://localhost:8080/mcp/v1/query 
@@ -253,7 +253,7 @@ http://localhost:8080/mcp/v1/query
 
 **Delete documents:**
 
-```json
+```bash
 curl -X POST 
 
 http://localhost:8080/mcp/v1/delete 
@@ -267,7 +267,7 @@ http://localhost:8080/mcp/v1/delete
 
 **List documents:**
 
-```json
+```bash
 curl -X POST 
 
 http://localhost:8080/mcp/v1/list 
