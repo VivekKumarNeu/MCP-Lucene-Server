@@ -200,7 +200,7 @@ curl http://localhost:8080/mcp/v1/status
 
 **Upsert documents:**
 
-```bash
+<pre>```bash
 curl -X POST 
 
 http://localhost:8080/mcp/v1/upsert 
@@ -227,7 +227,7 @@ http://localhost:8080/mcp/v1/upsert
 }
 ]
 }'
-```
+```</pre>
 
 **Query documents:**
 
