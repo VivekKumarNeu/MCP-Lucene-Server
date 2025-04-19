@@ -203,9 +203,9 @@ curl http://localhost:8080/mcp/v1/status
 ```bash
 curl -X POST 
 
-http://localhost:8080/mcp/v1/upsert 
+http://localhost:8080/mcp/v1/upsert \
 
--H 'Content-Type: application/json' 
+-H 'Content-Type: application/json' \
 
 -d '{
 "documents": [
