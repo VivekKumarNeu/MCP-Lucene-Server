@@ -194,13 +194,13 @@ The server provides the following API endpoints:
 
 **Get server status:**
 
-
+```json
 curl http://localhost:8080/mcp/v1/status
-
+```
 
 **Upsert documents:**
 
-
+```json
 curl -X POST 
 
 http://localhost:8080/mcp/v1/upsert 
@@ -227,11 +227,11 @@ http://localhost:8080/mcp/v1/upsert
 }
 ]
 }'
-
+```
 
 **Query documents:**
 
-
+```json
 curl -X POST 
 
 http://localhost:8080/mcp/v1/query 
@@ -249,11 +249,11 @@ http://localhost:8080/mcp/v1/query
 }
 ]
 }'
-
+```
 
 **Delete documents:**
 
-
+```json
 curl -X POST 
 
 http://localhost:8080/mcp/v1/delete 
@@ -263,11 +263,11 @@ http://localhost:8080/mcp/v1/delete
 -d '{
 "ids": ["doc1"]
 }'
-
+```
 
 **List documents:**
 
-
+```json
 curl -X POST 
 
 http://localhost:8080/mcp/v1/list 
@@ -277,7 +277,7 @@ http://localhost:8080/mcp/v1/list
 -d '{
 "ids": ["doc1", "doc2"]
 }'
-
+```
 
 ## Configuration
 
@@ -294,11 +294,6 @@ You can set these properties in an `application.properties` or `application.yml`
 
 server.port=8080
 lucene.index.path=/path/to/lucene/index
-
-
-## Contributing
-
-Contributions are welcome! Please refer to the [Contributing Guidelines](https://github.com/your-username/mcp-lucene-server/blob/main/CONTRIBUTING.md) for information on how to contribute to this project.
 
 ## License
 
