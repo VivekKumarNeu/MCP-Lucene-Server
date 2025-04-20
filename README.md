@@ -31,6 +31,7 @@ This server is designed to be compliant with the Model Context Protocol, enablin
 * **Status:** Check the server status.
 
 * **Spring Boot:** Built with Spring Boot for easy setup and deployment.
+* **Dockerization:** Includes instructions for containerizing the application using Docker.
 
 ## Table of Contents
 
@@ -54,8 +55,6 @@ This server is designed to be compliant with the Model Context Protocol, enablin
 
 * [Configuration](#configuration)
 
-* [Contributing](#contributing)
-
 * [License](#license)
 
 ## Getting Started
@@ -65,6 +64,7 @@ This server is designed to be compliant with the Model Context Protocol, enablin
 * **Java:** Java 11 or higher.
 
 * **Maven:** Maven 3.6.0 or higher.
+* **Docker:** [Install Docker](https://docs.docker.com/get-docker/) if you plan to use the Docker image.
 
 ### Installation
 
@@ -85,15 +85,30 @@ This server is designed to be compliant with the Model Context Protocol, enablin
 
 ### Running the Server
 
-1.  **Run the Spring Boot application:**
+#### Without Docker
 
-    ```
+1.  **Run the Spring Boot application:**
+    ```bash
     java -jar target/mcp-lucene-server-0.0.1-SNAPSHOT.jar
     ```
-
     (The exact name of the `.jar` file might vary slightly depending on your project version.)
 
-    The server will start on port 8080 by default.
+2.  The server will start on port `8080` by default.
+
+#### With Docker
+
+1.  **Ensure you have Docker installed:** Follow the instructions on the official Docker website: [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
+2.  **Build the Docker image:**
+    Navigate to the root directory of your project in your terminal and run:
+    ```bash
+    docker build -t mcp-lucene-server .
+    ```
+
+5.  **Run the Docker container:**
+    ```bash
+    docker run -p 8080:8080 mcp-lucene-server
+    ```
+    This will map port `8080` on your host machine to port `8080` inside the container.
 
 ## Usage
 
