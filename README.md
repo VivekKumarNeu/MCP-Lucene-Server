@@ -1,3 +1,8 @@
+![Build](https://github.com/username/repo/actions/workflows/maven.yml/badge.svg)
+![Coverage](https://img.shields.io/codecov/c/github/username/repo)
+![License](https://img.shields.io/github/license/username/repo)
+
+
 # MCP Lucene Server
 
 ## Description
