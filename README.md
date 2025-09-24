@@ -312,3 +312,99 @@ lucene.index.path=/path/to/lucene/index
 ## License
 
 This project is licensed under the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
+
+## MCP Shim for Claude Desktop
+
+This project includes an optional MCP shim (`mcp-shim/`) that exposes the server's REST endpoints as MCP tools over STDIO so you can use them directly from Claude Desktop.
+
+### Prerequisites
+- Java 17+
+- Node.js 18+
+- Maven 3.6+
+
+### 1) Run the Spring Boot server
+```bash
+mvn spring-boot:run
+```
+The API will be available at `http://localhost:8080/mcp/v1`.
+
+### 2) Run the MCP shim
+```bash
+cd mcp-shim
+npm install
+# JSON + text output (default)
+LUCENE_BASE_URL=http://localhost:8080/mcp/v1 npm start
+# If your client cannot render JSON tool outputs, force text-only
+MCP_FORCE_TEXT=1 LUCENE_BASE_URL=http://localhost:8080/mcp/v1 npm start
+```
+
+### 3) Configure Claude Desktop
+Update `~/.claude/mcp/config.json`:
+```json
+{
+  "mcpServers": {
+    "lucene": {
+      "command": "/opt/homebrew/bin/node",
+      "args": ["/Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/server.js"],
+      "env": {
+        "LUCENE_BASE_URL": "http://localhost:8080/mcp/v1",
+        "MCP_FORCE_TEXT": "1"
+      }
+    }
+  }
+}
+```
+Alternatively, use the wrapper script to capture shim logs to `/tmp/mcp-lucene-shim.stderr.log`:
+```bash
+cat > /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh <<'SH'
+#!/usr/bin/env bash
+set -euo pipefail
+export LUCENE_BASE_URL="${LUCENE_BASE_URL:-http://localhost:8080/mcp/v1}"
+exec node /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/server.js \
+  2> /tmp/mcp-lucene-shim.stderr.log
+SH
+chmod +x /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh
+```
+Then set in `~/.claude/mcp/config.json`:
+```json
+{
+  "mcpServers": {
+    "lucene": {
+      "command": "/Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh",
+      "env": {
+        "LUCENE_BASE_URL": "http://localhost:8080/mcp/v1",
+        "MCP_FORCE_TEXT": "1"
+      }
+    }
+  }
+}
+```
+
+### 4) Available tools
+- `lucene_status`: Get server/index status
+- `lucene_upsert`: Upsert documents
+- `lucene_query`: Query documents (with optional metadata filters)
+- `lucene_delete`: Delete by IDs
+- `lucene_list`: List documents with pagination
+
+### 5) Example prompts for Claude Desktop
+- Run `lucene_status`
+- Run `lucene_list` with: `{ "limit": 10, "offset": 0 }`
+- Run `lucene_upsert` with: `{"documents":[{"id":"doc-1","text":"hello world","metadata":{"lang":"en"}}]}`
+- Run `lucene_query` with: `{"queries":[{"query":"hello","top_k":5}]}`
+- Run `lucene_delete` with: `{ "ids": ["doc-1"] }`
+
+### 6) Troubleshooting
+- Verify the API returns JSON:
+```bash
+curl -i http://localhost:8080/mcp/v1/status
+```
+- If Claude shows "unsupported format", start the shim with text-only output:
+```bash
+MCP_FORCE_TEXT=1 LUCENE_BASE_URL=http://localhost:8080/mcp/v1 npm start
+```
+- View shim logs (when using wrapper):
+```bash
+tail -n +1 /tmp/mcp-lucene-shim.stderr.log
+```
+- Ensure the paths in your `config.json` are absolute and correct, then restart Claude Desktop.

@@ -88,4 +88,19 @@ public class McpController {
         }
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<?> listDocuments(@RequestParam(defaultValue = "10") int limit,
+                                          @RequestParam(defaultValue = "0") int offset) {
+        try {
+            List<McpDocument> documents = luceneService.listDocuments(limit, offset);
+            return ResponseEntity.ok(documents);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new McpErrorResponse("internal_error", "Failed to list documents: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new McpErrorResponse("internal_error", "An unexpected error occurred: " + e.getMessage()));
+        }
+    }
+
 }

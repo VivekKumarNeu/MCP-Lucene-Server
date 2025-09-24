@@ -4,7 +4,6 @@ import com.example.mcpluceneserver.config.LuceneProperties;
 import com.example.mcpluceneserver.model.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
@@ -13,6 +12,8 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -24,6 +25,8 @@ import java.util.Map;
 
 @Service
 public class LuceneService {
+
+    private static final Logger log = LoggerFactory.getLogger(LuceneService.class);
 
     // --- Constants for Lucene Field Names ---
     private static final String FIELD_ID = "mcp_id";
@@ -69,13 +72,13 @@ public class LuceneService {
             searcherManager.maybeRefresh(); // Ensure we have the latest reader
             searcher = searcherManager.acquire();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            log.error("Error getting document count: {}", e.getMessage());
         } finally {
             if (searcher != null) {
                 try {
                     searcherManager.release(searcher);
                 } catch (IOException e) {
-                    System.out.println(e.getMessage());
+                    log.error("Error releasing searcher: {}", e.getMessage());
                 }
             }
         }
@@ -210,6 +213,38 @@ public class LuceneService {
         return new McpDeleteResponse(true, idTerms.length);
     }
 
+    public List<McpDocument> listDocuments(int limit, int offset) throws IOException {
+        List<McpDocument> documents = new ArrayList<>();
+        IndexSearcher searcher = null;
+        
+        try {
+            searcherManager.maybeRefresh();
+            searcher = searcherManager.acquire();
+            
+            // Create a match all query to get all documents
+            Query matchAllQuery = new MatchAllDocsQuery();
+            TopDocs topDocs = searcher.search(matchAllQuery, offset + limit);
+            
+            // Apply offset and limit
+            int startIndex = Math.min(offset, topDocs.scoreDocs.length);
+            int endIndex = Math.min(offset + limit, topDocs.scoreDocs.length);
+            
+            for (int i = startIndex; i < endIndex; i++) {
+                ScoreDoc scoreDoc = topDocs.scoreDocs[i];
+                Document hitDoc = searcher.doc(scoreDoc.doc);
+                McpDocument mcpDoc = convertToMcpDocument(hitDoc);
+                documents.add(mcpDoc);
+            }
+            
+        } finally {
+            if (searcher != null) {
+                searcherManager.release(searcher);
+            }
+        }
+        
+        return documents;
+    }
+
     public McpStatusResponse getStatus() {
         IndexSearcher searcher = null;
         long docCount = -1;
@@ -285,5 +320,22 @@ public class LuceneService {
         result.setMetadata(metadata);
 
         return result;
+    }
+
+    private McpDocument convertToMcpDocument(Document luceneDoc) {
+        McpDocument mcpDoc = new McpDocument();
+        mcpDoc.setId(luceneDoc.get(FIELD_ID));
+        mcpDoc.setText(luceneDoc.get(FIELD_CONTENT));
+
+        Map<String, String> metadata = new HashMap<>();
+        for (IndexableField field : luceneDoc.getFields()) {
+            if (field.name().startsWith(FIELD_METADATA_PREFIX)) {
+                String metaKey = field.name().substring(FIELD_METADATA_PREFIX.length());
+                metadata.put(metaKey, field.stringValue());
+            }
+        }
+        mcpDoc.setMetadata(metadata);
+
+        return mcpDoc;
     }
 }
