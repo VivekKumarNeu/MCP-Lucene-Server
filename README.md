@@ -345,7 +345,7 @@ Update `~/.claude/mcp/config.json`:
   "mcpServers": {
     "lucene": {
       "command": "/opt/homebrew/bin/node",
-      "args": ["/Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/server.js"],
+      "args": [".../MCP-Lucene-Server/mcp-shim/server.js"],
       "env": {
         "LUCENE_BASE_URL": "http://localhost:8080/mcp/v1",
         "MCP_FORCE_TEXT": "1"
@@ -356,21 +356,21 @@ Update `~/.claude/mcp/config.json`:
 ```
 Alternatively, use the wrapper script to capture shim logs to `/tmp/mcp-lucene-shim.stderr.log`:
 ```bash
-cat > /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh <<'SH'
+cat > .../MCP-Lucene-Server/mcp-shim/run-shim.sh <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 export LUCENE_BASE_URL="${LUCENE_BASE_URL:-http://localhost:8080/mcp/v1}"
-exec node /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/server.js \
+exec node .../MCP-Lucene-Server/mcp-shim/server.js \
   2> /tmp/mcp-lucene-shim.stderr.log
 SH
-chmod +x /Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh
+chmod +x .../MCP-Lucene-Server/mcp-shim/run-shim.sh
 ```
 Then set in `~/.claude/mcp/config.json`:
 ```json
 {
   "mcpServers": {
     "lucene": {
-      "command": "/Users/vivekkumar/github/MCP-Lucene-Server/mcp-shim/run-shim.sh",
+      "command": ".../MCP-Lucene-Server/mcp-shim/run-shim.sh",
       "env": {
         "LUCENE_BASE_URL": "http://localhost:8080/mcp/v1",
         "MCP_FORCE_TEXT": "1"
