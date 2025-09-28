@@ -8,6 +8,10 @@
 The MCP Lucene Server is a Java-based implementation of the Model Context Protocol (MCP) designed to provide efficient search and retrieval capabilities using Apache Lucene. This server allows you to manage and query documents, leveraging Lucene's powerful indexing and search features. It is built using Spring Boot for easy setup and deployment.
 
 
+![lucene_mcp1](https://github.com/user-attachments/assets/5dc28224-2dda-4b42-ac90-83343c9c386d)
+
+![lucene_mcp2](https://github.com/user-attachments/assets/b5ffd0cf-87ad-4129-af34-98163690f2ba)
+
 ## Features
 
 * **MCP Compliance:** Implements the core Model Context Protocol.
